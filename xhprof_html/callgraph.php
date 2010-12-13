@@ -29,6 +29,13 @@
  * @author Changhao Jiang (cjiang@facebook.com)
  */
 
+// start moodle modification: moodleize this script
+require_once(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
+require_once($CFG->libdir . '/xhprof/xhprof_moodle.php');
+require_login();
+require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
+// end moodle modification
+
 // by default assume that xhprof_html & xhprof_lib directories
 // are at the same level.
 $GLOBALS['XHPROF_LIB_ROOT'] = dirname(__FILE__) . '/../xhprof_lib';
@@ -78,7 +85,11 @@ if (!array_key_exists($type, $xhprof_legal_image_types)) {
   $type = $params['type'][1]; // default image type.
 }
 
-$xhprof_runs_impl = new XHProfRuns_Default();
+// start moodle modification: use own XHProfRuns implementation
+//$xhprof_runs_impl = new XHProfRuns_Default();
+require_once($GLOBALS['XHPROF_LIB_ROOT'].'/../xhprof_moodle.php');
+$xhprof_runs_impl = new moodle_xhprofrun();
+// end moodle modification
 
 if (!empty($run)) {
   // single run call graph image generation
